@@ -102,6 +102,26 @@ What you should see: `nodes=['__start__', 'model', 'tools', '__end__']`, then `[
 
 A 4B model may skip `flag_suspect` or call tools in a different order. If `suspects` stays empty, that's the model, not the wiring (the tests prove the wiring).
 
+**Observed run** (qwen3.5:4b, Ollama machine):
+
+```text
+[model] calls: ['my_jobs({})']
+[tools] my_jobs -> orders-enricher, orders-sink
+[model] calls: ["flink_job_status({'job': 'orders-enricher'})", "taskmanager_metrics({'job': 'orders-enricher'})"]
+[tools] ...lag=2,400,000 records; last checkpoint FAILED... / backpressure=HIGH on operator 'enrich-join'; heap=92%
+[model] calls: ["flink_job_status({'job': 'orders-sink'})", "taskmanager_metrics({'job': 'orders-sink'})"]
+[tools] ...lag=0 records; last checkpoint OK / backpressure=LOW; heap=41%
+[model] calls: ["flag_suspect({'job': 'orders-enricher', 'reason': 'High consumer lag and failed checkpoint ...'})"]
+[tools] flag_suspect -> flagged orders-enricher
+state['suspects']: ['orders-enricher: High consumer lag ... (flagged for u42)']
+```
+
+What it shows:
+- **5 model calls, 4 tool rounds.** Two tool calls in one model turn run in **one** `tools` step, in parallel.
+- `flag_suspect` was called **once** (only one job was unhealthy), so the reducer was not needed in this run. The test covers the two-flags case.
+- `user_id` (`u42`) reached the tool via context. The model never saw it.
+- The follow-up ("what did you flag and why?") was answered from the **message history** in the checkpoint: the `flag_suspect` call and its `ToolMessage`. The model never sees `state["suspects"]`. Custom state keys are for **your code** (and middleware, Ch 12), not the prompt.
+
 ## Break it
 
 **Verified here, no model needed** (langchain 1.4.9 / langgraph 1.2.20):

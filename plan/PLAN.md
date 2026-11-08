@@ -9,10 +9,10 @@ Domain used everywhere: **on-call assistant for a data platform** (Iceberg, Flin
 
 | Field | Value |
 | --- | --- |
-| Current chapter | **Ch 11 — `create_agent`** (code + tests done; demo to run on the Ollama machine) |
+| Current chapter | **Ch 19 — Memory, skills, permissions** (runs anywhere with scripted models; `--ollama` optional). Part 4 done |
 | Last completed | — |
-| Next up | Ch 12 — Middleware. Pending on the Ollama machine: Ch 4 `agent_loop`, Ch 5 `incident_thread`, Ch 6 `--ollama`, Ch 7 `live_console`, Ch 11 `flink_oncall_agent` |
-| Last updated | 2026-11-06 |
+| Next up | Ch 20 — LangSmith (Part 5). Pending on the Ollama machine: Ch 4 `agent_loop`, Ch 5 `incident_thread`, Ch 6 `--ollama`, Ch 7 `live_console` (outputs not yet reported) |
+| Last updated | 2026-11-08 |
 
 ### Progress
 
@@ -31,15 +31,15 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (code runs on Ollama + R
 | 8 | Human-in-the-loop | ✅ | `chapters/ch08_human_in_loop/`; no LLM; `--interactive` for real input. Side effect before `interrupt()` → 6 pages / 8 restarts for 3 approvals; resume without checkpointer → `RuntimeError` |
 | 9 | Subgraphs & composition | ✅ | `chapters/ch09_subgraphs/`; no LLM. Mismatched output key → silently dropped; wrapper re-runs on resume but child resumes from its checkpoint; context flows into children |
 | 10 | Functional API & durable execution | ✅ | `chapters/ch10_functional_api/`; template draft by default, `--ollama` for LLM. Entrypoint body re-runs on resume, finished tasks replay; crash → `invoke(None)` re-runs only the failed task |
-| 11 | `create_agent` | 🟨 | `chapters/ch11_create_agent/`; tests pass (ToolNode + agent state/context, no model); demo pending on Ollama. `Command` from a tool needs a `ToolMessage`; parallel Command writes need a reducer |
-| 12 | Middleware | ⬜ | |
-| 13 | Context engineering & structured output | ⬜ | |
-| 14 | Multi-agent patterns | ⬜ | |
-| 15 | Harness anatomy | ⬜ | |
-| 16 | Custom harness from scratch | ⬜ | |
-| 17 | Deep Agents: concepts | ⬜ | |
-| 18 | `deepagents` API | ⬜ | |
-| 19 | Memory, skills, permissions | ⬜ | |
+| 11 | `create_agent` | ✅ | `chapters/ch11_create_agent/`; tests pass; demo verified on qwen3.5:4b (my_jobs → parallel status+metrics → flag_suspect → answer; follow-up recalls from history). `Command` from a tool needs a `ToolMessage`; parallel Command writes need a reducer |
+| 12 | Middleware | ✅ | `chapters/ch12_middleware/`; runs anywhere via `sim/scripted_model.py` (replays AIMessages; middleware wraps the loop, not the model). Node hooks are graph nodes, wrap hooks are not; `jump_to` needs `@hook_config(can_jump_to=...)`; hook params bound by name (`runtime`); PII redacts the stored message; repeated tool_call ids → router `KeyError` |
+| 13 | Context engineering & structured output | ✅ | `chapters/ch13_context_output/`; runs anywhere via scripted models that log what they saw. Hiding a tool ≠ forbidding it (tools node still runs it) → `TeamToolAccess` hides + refuses; `ChatOllama` has no profile so auto `response_format` = `ToolStrategy`; schema tool added after middleware filtering |
+| 14 | Multi-agent | ✅ | `chapters/ch14_multi_agent/`; supervisor / handoff / router, runs anywhere via scripted models. Handoff: no `Command.PARENT` → 'unknown channel' warnings + GraphRecursionError; update must carry the transfer AIMessage; `destinations=` only affects drawing; route START on `active_agent` |
+| 15 | Harness anatomy | ✅ | `chapters/ch15_harness_anatomy/`; 9 components as 9 small middleware emitting `custom` events (harness log); runs anywhere via scripted model. Loop cap w/o forced answer → junk saved to memory; verifier off → wrong answer stored; audit must be outermost |
+| 16 | Custom harness from scratch | ✅ | `chapters/ch16_custom_harness/`; explicit graph + create_agent rebuild give identical results on the same script. Default `CachePolicy` key never hits across threads (message ids) → `key_func`; `get_graph()` calls key_func on `{}` and needs a str; forced answer must strip tool calls; `cost_usd` needs a reducer |
+| 17 | Deep Agents concepts | ✅ | `chapters/ch17_deep_agents/`; versions deepagents 0.7.34 / langchain 1.4.9 / langgraph 1.2.20. Planning opt-in (`TodoListMiddleware`); `execute` registered but not offered without sandbox; harness prompt is mostly tool descriptions (9k chars) not system prompt (1.5k); auto-eviction >20k tokens; shallow 645k vs deep 10k chars over the run; same-named middleware replaces core |
+| 18 | `deepagents` API | ✅ | `chapters/ch18_deepagents_api/`; backends as instances (`StoreBackend(namespace=fn, store=)`); Composite strips the prefix; `virtual_mode=False` reads the real disk; parallel `task` calls stream in `tools:<id>` namespaces and write into parent `files`; `CompiledSubAgent` needs a `messages` key; Ch 16 harness rebuilt locally as `rca_graph.py` |
+| 19 | Memory, skills, permissions | ✅ | `chapters/ch19_memory_skills/` + `oncall_ws/` template (copied to temp per run). Skills: only frontmatter in prompt, body via read_file; memory files load once per thread (`memory_contents`); deny also hides from ls/grep; `interrupt` mode = HITL; subagent permissions replace parent's (RO auditor read secrets); allow-first disables all denies. Async subagents: concept only (need a deployment) |
 | 20 | LangSmith tracing & evals | ⬜ | |
 | 21 | Deployment: Agent Server | ⬜ | |
 | 22 | Postgres, durability, TTL | ⬜ | |
@@ -345,3 +345,12 @@ Each entry has: **Concept** (what you must leave knowing) · **Diagrams** · **C
 | 2026-11-06 | 9 | Built `ch09_subgraphs` (maintenance_team, sim/iceberg_catalog, 2 tests, README with 4 diagrams + verified Break-it) |
 | 2026-11-06 | 10 | Built `ch10_functional_api` (postmortem, sim/incident_sources, 2 tests, README with comparison table + 3 diagrams + verified Break-it). Part 1 done |
 | 2026-11-06 | 11 | Built `ch11_create_agent` (flink_oncall_agent, oncall_tools, sim/flink_cluster, 2 no-model tests, README with 3 diagrams + Break-it) |
+| 2026-11-08 | 11 | Ch 11 demo verified on the Ollama machine (qwen3.5:4b): all 4 tools used, one `flag_suspect`, follow-up answered from thread history. README updated with the observed run |
+| 2026-11-08 | 12 | Built `ch12_middleware` (custom_middleware, prod_agent, ops_tools, sim/scripted_model + lakehouse_ops, 3 tests, README with hook table + 4 diagrams + verified Break-it). Note: committed Ch 4 sim has a 'redo' experiment that fails its test |
+| 2026-11-08 | 13 | Built `ch13_context_output` (triage_report, triage_tools, sim/scripted_model + lakehouse, 2 tests, README with seen-vs-stored + 3 more diagrams + verified Break-it) |
+| 2026-11-08 | 14 | Built `ch14_multi_agent` (specialists, supervisor, handoff, router, sim/scripted_model + scripts + platform, 3 tests, README with pattern table + 4 diagrams + verified Break-it). Part 2 done |
+| 2026-11-08 | 15 | Built `ch15_harness_anatomy` (harness_components, harness_map, sim/scripted_model + trino, 2 tests, README with component map + 3 diagrams + verified Break-it) |
+| 2026-11-08 | 16 | Built `ch16_custom_harness` (rca_harness with exercises 1–2, agent_rebuild = exercise 3, rca_tools, sim/scripted_model + platform, 3 tests, README with comparison table + 3 diagrams + verified Break-it). Part 3 done |
+| 2026-11-08 | 17 | Built `ch17_deep_agents` (inspect_deep_agent, shallow_vs_deep, oncall_tools, sim/scripted_model + platform, 2 tests, README with pillar table + 3 diagrams + verified Break-it). Version check recorded |
+| 2026-11-08 | 18 | Built `ch18_deepagents_api` (incident_commander, backends_tour, rca_graph, oncall_tools, sim/scripted_model + platform, 2 tests, README with backend table + 3 diagrams + verified Break-it) |
+| 2026-11-08 | 19 | Built `ch19_memory_skills` (oncall_ws template, skills_memory, permissions, sim/workspace + scripted_model + platform, 2 tests, README with rule-evaluation + skill-loading diagrams + verified Break-it). Part 4 done |
