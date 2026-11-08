@@ -45,8 +45,8 @@ def build_graph():
 
 def main() -> None:
     graph = build_graph()
-    print("Graph (paste into mermaid.live):\n")
-    print(graph.get_graph().draw_mermaid())
+    print("Graph:\n")
+    print(graph.get_graph().draw_ascii())   # box-drawing render (needs grandalf)
 
     for alert in ALERTS:
         print(f"\n▶ {alert}")

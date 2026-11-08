@@ -18,6 +18,19 @@ EMBED_DIMS = int(os.getenv("EMBED_DIMS", "768"))               # nomic-embed-tex
 # LLM_THINK=true turns it on; LLM_THINK=default leaves it to the model.
 _THINK = {"true": True, "false": False, "default": None}[os.getenv("LLM_THINK", "false").lower()]
 
+# Local tracing: PHOENIX_TRACING=true sends spans to a local Phoenix server
+# (start it with `uv run phoenix serve`, UI at http://localhost:6006). Nothing leaves the machine.
+if os.getenv("PHOENIX_TRACING", "false").lower() == "true":
+    from phoenix.otel import register
+
+    register(
+        project_name=os.getenv("PHOENIX_PROJECT", "langgraph-lab"),
+        endpoint=os.getenv("PHOENIX_COLLECTOR_ENDPOINT", "http://localhost:6006/v1/traces"),
+        auto_instrument=True,  # picks up openinference-instrumentation-langchain
+        batch=False,           # export each span immediately; short scripts won't lose spans on exit
+        verbose=False,
+    )
+
 
 def make_llm(model: str = MODEL, **kwargs):
     """Build an Ollama chat model with the lab defaults (temperature 0, shared base URL)."""

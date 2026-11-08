@@ -78,9 +78,11 @@ def ask_human(request: dict) -> Decision:
 
 def main() -> None:
     interactive = "--interactive" in sys.argv
+    #interactive = True
     ops = FlinkOps()
     ctx = OpsContext(ops=ops)
     graph = build_graph()
+    print(graph.get_graph().draw_mermaid())
     scripted: list[Decision] = [{"action": "approve"},
                                 {"action": "edit", "parallelism": 6},
                                 {"action": "reject"}]

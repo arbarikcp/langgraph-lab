@@ -54,7 +54,7 @@ sequenceDiagram
   U->>G: update_state(checkpoint after Q1, + "assume heap is fine")
   G->>S: new checkpoint (parent = after Q1)
   U->>G: invoke(None, fork_cfg)
-  G->>S: new branch; original turns untouched
+  G->>S: new branch, original turns untouched
 ```
 
 **Classes**

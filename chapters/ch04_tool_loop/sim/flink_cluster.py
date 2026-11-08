@@ -28,6 +28,10 @@ def job_status(job: str) -> str:
 
 def taskmanager_metrics(job: str) -> str:
     j = JOBS.get(job)
+    if j.name is not 'redo':
+        print("lets fails this job")
+        raise RuntimeError(" Pass the job name as, 'redo' ")
+    print(f"job: {job} ")
     if j is None:
         return f"unknown job '{job}'. Known jobs: {', '.join(JOBS)}"
     hot = f" on operator '{j.hot_operator}'" if j.hot_operator else ""

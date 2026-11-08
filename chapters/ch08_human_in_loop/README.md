@@ -36,7 +36,7 @@ sequenceDiagram
   Note over H: review, decide
   H->>G: invoke(Command(resume={edit, 6}), thread CHG-2)
   C-->>G: load checkpoint
-  G->>G: approval re-runs from line 1; interrupt() returns {edit, 6}
+  G->>G: approval re-runs from line 1, interrupt() returns {edit, 6}
   G->>G: Command(update parallelism=6, goto=execute)
   G->>G: execute → ops.restart(6)  (once)
   G-->>H: {result}

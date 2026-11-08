@@ -75,7 +75,9 @@ def thread(incident_id: str) -> dict:
 
 
 def main() -> None:
-    store = make_store(use_ollama="--ollama" in sys.argv)
+    #use_ollama="--ollama" in sys.argv
+    use_ollama = True
+    store = make_store(use_ollama=use_ollama)
     graph = build_graph(store)
     streaming = OnCallContext(team="streaming")
 

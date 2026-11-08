@@ -54,6 +54,7 @@ def build_graph():
 
 def main() -> None:
     graph = build_graph()
+    print(graph.get_graph().draw_mermaid())
     for namespace in ("sales", "ops"):
         print(f"\n▶ audit namespace '{namespace}'")
         for ev in graph.stream({"namespace": namespace}, stream_mode="debug"):

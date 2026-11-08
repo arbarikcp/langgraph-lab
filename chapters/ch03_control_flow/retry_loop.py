@@ -59,6 +59,7 @@ def build_graph():
 
 def main() -> None:
     graph = build_graph()
+    print(graph.get_graph().draw_mermaid())
     sql = "SELECT count(*) FROM sales.orders.snapshots"
 
     for failures in (2, 5):

@@ -26,8 +26,12 @@ def llm_draft(timeline: str, metrics: list[str]) -> str:
     return llm.invoke(prompt).content
 
 
-def build_postmortem(sources: IncidentSources, use_llm: bool = False):
-    """Tasks close over `sources`, so tests and demos each get their own fake systems."""
+def build_postmortem(sources: IncidentSources, use_llm: bool = False, checkpointer=None):
+    """Tasks close over `sources`, so tests and demos each get their own fake systems.
+
+    Pass a durable checkpointer (SqliteSaver / PostgresSaver) to pause in one process and
+    resume in another, days later. See review_service.py.
+    """
 
     @task
     def fetch_timeline(incident_id: str) -> str:
@@ -45,7 +49,7 @@ def build_postmortem(sources: IncidentSources, use_llm: bool = False):
     def publish(incident_id: str, doc: str) -> str:          # side effect -> must be a task
         return sources.publish(incident_id, doc)
 
-    @entrypoint(checkpointer=InMemorySaver())
+    @entrypoint(checkpointer=checkpointer or InMemorySaver())
     def postmortem(incident_id: str) -> dict:
         # Plain Python control flow. This body re-runs on every resume;
         # each finished task returns its saved result instead of running again.
@@ -60,7 +64,8 @@ def build_postmortem(sources: IncidentSources, use_llm: bool = False):
 
 
 def main() -> None:
-    use_llm = "--ollama" in sys.argv
+    #use_llm = "--ollama" in sys.argv
+    use_llm = True
 
     print("▶ PM-4211: pause for review, then resume")
     sources = IncidentSources()

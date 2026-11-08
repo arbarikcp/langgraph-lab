@@ -4,9 +4,11 @@ Run (needs Ollama):  python -m chapters.ch04_tool_loop.agent_loop
 """
 import json
 
+from langchain.agents.middleware import wrap_tool_call
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+from langgraph.types import RetryPolicy
 
 from chapters.ch04_tool_loop.flink_tools import TOOLS
 from common.llm import MODEL, llm
@@ -27,7 +29,7 @@ def agent(state: MessagesState) -> dict:
 def build_graph():
     builder = StateGraph(MessagesState)
     builder.add_node("agent", agent)
-    builder.add_node("tools", ToolNode(TOOLS))           # runs every tool call in the last AIMessage
+    builder.add_node("tools", ToolNode(TOOLS, handle_tool_errors=True), retry_policy=RetryPolicy(max_attempts=2))           # runs every tool call in the last AIMessage
     builder.add_edge(START, "agent")
     builder.add_conditional_edges("agent", tools_condition)   # tool_calls -> "tools", else END
     builder.add_edge("tools", "agent")                        # the loop
@@ -43,6 +45,7 @@ def show_tool_schemas() -> None:
 def main() -> None:
     graph = build_graph()
     print(f"model: {MODEL}\n")
+    print(graph.get_graph().draw_mermaid())
     show_tool_schemas()
     question = HumanMessage("orders-enricher is lagging. Why?")
     question.pretty_print()

@@ -63,7 +63,7 @@ def build_graph():
 def main() -> None:
     graph = build_graph()
     ctx = AuditContext(catalog=FakeCatalog("polaris-prod"))
-
+    print(graph.get_graph().draw_mermaid())
     for table in ("sales.orders", "sales.items"):
         print(f"\n▶ audit {table} (catalog={ctx.catalog.name})")
         for ev in graph.stream({"table": table}, context=ctx, stream_mode="debug"):

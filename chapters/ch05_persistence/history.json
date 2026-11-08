@@ -1,0 +1,1150 @@
+[
+  StateSnapshot(values=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '25708ae6-8d70-4086-97b8-eb4da5dafd5b'
+      ),
+      AIMessage(content=
+      '',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:40.27084Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 7060764875,
+        'load_duration': 5339733875,
+        'prompt_eval_count': 412,
+        'prompt_eval_duration': 596661000,
+        'eval_count': 63,
+        'eval_duration': 1119664000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-1310-7108-918f-2c051a783710-0',
+      tool_calls=
+      [
+        {
+          'name': 'flink_job_status',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4',
+          'type': 'tool_call'
+        },
+        {
+          'name': 'taskmanager_metrics',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '4f3e92de-9905-4d2c-9ac4-a77ad4bca829',
+          'type': 'tool_call'
+        }
+      ],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 412,
+        'output_tokens': 63,
+        'total_tokens': 475
+      }
+      ),
+      ToolMessage(content=
+      'orders-enricher: lag=2,400,000 records; last checkpoint FAILED (timeout after 10m)',
+      name=
+      'flink_job_status',
+      id=
+      '05272f6b-4727-4865-92d2-e05ae9f3f99d',
+      tool_call_id=
+      '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4'
+      ),
+      ToolMessage(content=
+      "orders-enricher: backpressure=HIGH on operator 'enrich-join'; heap=92%; parallelism=4",
+      name=
+      'taskmanager_metrics',
+      id=
+      '4efb65a4-0f96-4318-93e8-642316292e10',
+      tool_call_id=
+      '4f3e92de-9905-4d2c-9ac4-a77ad4bca829'
+      ),
+      AIMessage(content=
+      "**Likely cause:** The `enrich-join` operator is causing a memory pressure bottleneck, leading to high backpressure and checkpoint failures.\n\n*   **Evidence 1 (Job Status):** A massive lag of ~2.4M records combined with a failed checkpoint indicates the job cannot process data fast enough or complete its stateful operations within the timeout window.\n*   **Evidence 2 (TaskManager Metrics):** The `enrich-join` operator is under high backpressure, and heap usage at 92% suggests memory exhaustion or near-exhaustion on TaskManagers running this job.\n\n**Fix:** Increase the JVM heap size for the Flink jobs to accommodate larger state buffers required by the join operation (e.g., increasing `-Xmx`). If that doesn't resolve it, consider optimizing the join logic itself (e.g., using a broadcast join if one side is small) or adding more parallelism.",
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:44.415837Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 4101394958,
+        'load_duration': 197987375,
+        'prompt_eval_count': 548,
+        'prompt_eval_duration': 280274000,
+        'eval_count': 191,
+        'eval_duration': 3619238000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-2ed6-7515-801e-b034beff07c6-0',
+      tool_calls=
+      [],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 548,
+        'output_tokens': 191,
+        'total_tokens': 739
+      }
+      ),
+      HumanMessage(content=
+      'Summarise what you found in 2 lines.',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '00c894ba-2503-422c-9b99-f7f2b75aaa93'
+      ),
+      AIMessage(content=
+      'The `orders-enricher` job has ~2.4M record lag and failed checkpoints due to high backpressure on the `enrich-join` operator, which is also running at 92% heap usage indicating memory exhaustion. Increase JVM heap size or optimize the join logic (e.g., switch to a broadcast join) to resolve the bottleneck.',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:03:12.398492Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 2140720833,
+        'load_duration': 204130625,
+        'prompt_eval_count': 759,
+        'prompt_eval_duration': 543958000,
+        'eval_count': 74,
+        'eval_duration': 1384307000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b49a-8e2b-767f-bb01-efd4f82ed44f-0',
+      tool_calls=
+      [],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 759,
+        'output_tokens': 74,
+        'total_tokens': 833
+      }
+      )
+    ]
+  },
+  next=(),
+  config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70e-a1b0-670a-8006-e9eeff41e6c7'
+    }
+  },
+  metadata=
+  {
+    'source': 'loop',
+    'step': 6,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:03:12.402772+00:00',
+  parent_config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70e-8d24-65d4-8005-98ff4e28ee6c'
+    }
+  },
+  tasks=(),
+  interrupts=()),
+  StateSnapshot(values=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '25708ae6-8d70-4086-97b8-eb4da5dafd5b'
+      ),
+      AIMessage(content=
+      '',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:40.27084Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 7060764875,
+        'load_duration': 5339733875,
+        'prompt_eval_count': 412,
+        'prompt_eval_duration': 596661000,
+        'eval_count': 63,
+        'eval_duration': 1119664000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-1310-7108-918f-2c051a783710-0',
+      tool_calls=
+      [
+        {
+          'name': 'flink_job_status',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4',
+          'type': 'tool_call'
+        },
+        {
+          'name': 'taskmanager_metrics',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '4f3e92de-9905-4d2c-9ac4-a77ad4bca829',
+          'type': 'tool_call'
+        }
+      ],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 412,
+        'output_tokens': 63,
+        'total_tokens': 475
+      }
+      ),
+      ToolMessage(content=
+      'orders-enricher: lag=2,400,000 records; last checkpoint FAILED (timeout after 10m)',
+      name=
+      'flink_job_status',
+      id=
+      '05272f6b-4727-4865-92d2-e05ae9f3f99d',
+      tool_call_id=
+      '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4'
+      ),
+      ToolMessage(content=
+      "orders-enricher: backpressure=HIGH on operator 'enrich-join'; heap=92%; parallelism=4",
+      name=
+      'taskmanager_metrics',
+      id=
+      '4efb65a4-0f96-4318-93e8-642316292e10',
+      tool_call_id=
+      '4f3e92de-9905-4d2c-9ac4-a77ad4bca829'
+      ),
+      AIMessage(content=
+      "**Likely cause:** The `enrich-join` operator is causing a memory pressure bottleneck, leading to high backpressure and checkpoint failures.\n\n*   **Evidence 1 (Job Status):** A massive lag of ~2.4M records combined with a failed checkpoint indicates the job cannot process data fast enough or complete its stateful operations within the timeout window.\n*   **Evidence 2 (TaskManager Metrics):** The `enrich-join` operator is under high backpressure, and heap usage at 92% suggests memory exhaustion or near-exhaustion on TaskManagers running this job.\n\n**Fix:** Increase the JVM heap size for the Flink jobs to accommodate larger state buffers required by the join operation (e.g., increasing `-Xmx`). If that doesn't resolve it, consider optimizing the join logic itself (e.g., using a broadcast join if one side is small) or adding more parallelism.",
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:44.415837Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 4101394958,
+        'load_duration': 197987375,
+        'prompt_eval_count': 548,
+        'prompt_eval_duration': 280274000,
+        'eval_count': 191,
+        'eval_duration': 3619238000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-2ed6-7515-801e-b034beff07c6-0',
+      tool_calls=
+      [],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 548,
+        'output_tokens': 191,
+        'total_tokens': 739
+      }
+      ),
+      HumanMessage(content=
+      'Summarise what you found in 2 lines.',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '00c894ba-2503-422c-9b99-f7f2b75aaa93'
+      )
+    ]
+  },
+  next=(
+  'agent',
+  ),
+  config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70e-8d24-65d4-8005-98ff4e28ee6c'
+    }
+  },
+  metadata=
+  {
+    'source': 'loop',
+    'step': 5,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:03:10.248242+00:00',
+  parent_config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70e-8d1b-651a-8004-a2a003352b77'
+    }
+  },
+  tasks=(PregelTask(id=
+  '86ed1971-f8d8-3628-3a3f-176f030d4143',
+  name=
+  'agent',
+  path=(
+  '__pregel_pull',
+  'agent'
+  ),
+  error=None,
+  interrupts=(),
+  state=None,
+  result=
+  {
+    'messages': [
+      AIMessage(content=
+      'The `orders-enricher` job has ~2.4M record lag and failed checkpoints due to high backpressure on the `enrich-join` operator, which is also running at 92% heap usage indicating memory exhaustion. Increase JVM heap size or optimize the join logic (e.g., switch to a broadcast join) to resolve the bottleneck.',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:03:12.398492Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 2140720833,
+        'load_duration': 204130625,
+        'prompt_eval_count': 759,
+        'prompt_eval_duration': 543958000,
+        'eval_count': 74,
+        'eval_duration': 1384307000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b49a-8e2b-767f-bb01-efd4f82ed44f-0',
+      tool_calls=
+      [],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 759,
+        'output_tokens': 74,
+        'total_tokens': 833
+      }
+      )
+    ]
+  }
+  ),
+  ),
+  interrupts=()),
+  StateSnapshot(values=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '25708ae6-8d70-4086-97b8-eb4da5dafd5b'
+      ),
+      AIMessage(content=
+      '',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:40.27084Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 7060764875,
+        'load_duration': 5339733875,
+        'prompt_eval_count': 412,
+        'prompt_eval_duration': 596661000,
+        'eval_count': 63,
+        'eval_duration': 1119664000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-1310-7108-918f-2c051a783710-0',
+      tool_calls=
+      [
+        {
+          'name': 'flink_job_status',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4',
+          'type': 'tool_call'
+        },
+        {
+          'name': 'taskmanager_metrics',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '4f3e92de-9905-4d2c-9ac4-a77ad4bca829',
+          'type': 'tool_call'
+        }
+      ],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 412,
+        'output_tokens': 63,
+        'total_tokens': 475
+      }
+      ),
+      ToolMessage(content=
+      'orders-enricher: lag=2,400,000 records; last checkpoint FAILED (timeout after 10m)',
+      name=
+      'flink_job_status',
+      id=
+      '05272f6b-4727-4865-92d2-e05ae9f3f99d',
+      tool_call_id=
+      '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4'
+      ),
+      ToolMessage(content=
+      "orders-enricher: backpressure=HIGH on operator 'enrich-join'; heap=92%; parallelism=4",
+      name=
+      'taskmanager_metrics',
+      id=
+      '4efb65a4-0f96-4318-93e8-642316292e10',
+      tool_call_id=
+      '4f3e92de-9905-4d2c-9ac4-a77ad4bca829'
+      ),
+      AIMessage(content=
+      "**Likely cause:** The `enrich-join` operator is causing a memory pressure bottleneck, leading to high backpressure and checkpoint failures.\n\n*   **Evidence 1 (Job Status):** A massive lag of ~2.4M records combined with a failed checkpoint indicates the job cannot process data fast enough or complete its stateful operations within the timeout window.\n*   **Evidence 2 (TaskManager Metrics):** The `enrich-join` operator is under high backpressure, and heap usage at 92% suggests memory exhaustion or near-exhaustion on TaskManagers running this job.\n\n**Fix:** Increase the JVM heap size for the Flink jobs to accommodate larger state buffers required by the join operation (e.g., increasing `-Xmx`). If that doesn't resolve it, consider optimizing the join logic itself (e.g., using a broadcast join if one side is small) or adding more parallelism.",
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:44.415837Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 4101394958,
+        'load_duration': 197987375,
+        'prompt_eval_count': 548,
+        'prompt_eval_duration': 280274000,
+        'eval_count': 191,
+        'eval_duration': 3619238000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-2ed6-7515-801e-b034beff07c6-0',
+      tool_calls=
+      [],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 548,
+        'output_tokens': 191,
+        'total_tokens': 739
+      }
+      )
+    ]
+  },
+  next=(
+  '__start__',
+  ),
+  config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70e-8d1b-651a-8004-a2a003352b77'
+    }
+  },
+  metadata=
+  {
+    'source': 'input',
+    'step': 4,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:03:10.244480+00:00',
+  parent_config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70b-5a9f-624c-8003-c6b0d229408b'
+    }
+  },
+  tasks=(PregelTask(id=
+  'e69f750c-0fff-d173-59ee-3fd116c65b84',
+  name=
+  '__start__',
+  path=(
+  '__pregel_pull',
+  '__start__'
+  ),
+  error=None,
+  interrupts=(),
+  state=None,
+  result=
+  {
+    'messages': [
+      HumanMessage(content=
+      'Summarise what you found in 2 lines.',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '00c894ba-2503-422c-9b99-f7f2b75aaa93'
+      )
+    ]
+  }
+  ),
+  ),
+  interrupts=()),
+  StateSnapshot(values=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '25708ae6-8d70-4086-97b8-eb4da5dafd5b'
+      ),
+      AIMessage(content=
+      '',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:40.27084Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 7060764875,
+        'load_duration': 5339733875,
+        'prompt_eval_count': 412,
+        'prompt_eval_duration': 596661000,
+        'eval_count': 63,
+        'eval_duration': 1119664000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-1310-7108-918f-2c051a783710-0',
+      tool_calls=
+      [
+        {
+          'name': 'flink_job_status',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4',
+          'type': 'tool_call'
+        },
+        {
+          'name': 'taskmanager_metrics',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '4f3e92de-9905-4d2c-9ac4-a77ad4bca829',
+          'type': 'tool_call'
+        }
+      ],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 412,
+        'output_tokens': 63,
+        'total_tokens': 475
+      }
+      ),
+      ToolMessage(content=
+      'orders-enricher: lag=2,400,000 records; last checkpoint FAILED (timeout after 10m)',
+      name=
+      'flink_job_status',
+      id=
+      '05272f6b-4727-4865-92d2-e05ae9f3f99d',
+      tool_call_id=
+      '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4'
+      ),
+      ToolMessage(content=
+      "orders-enricher: backpressure=HIGH on operator 'enrich-join'; heap=92%; parallelism=4",
+      name=
+      'taskmanager_metrics',
+      id=
+      '4efb65a4-0f96-4318-93e8-642316292e10',
+      tool_call_id=
+      '4f3e92de-9905-4d2c-9ac4-a77ad4bca829'
+      ),
+      AIMessage(content=
+      "**Likely cause:** The `enrich-join` operator is causing a memory pressure bottleneck, leading to high backpressure and checkpoint failures.\n\n*   **Evidence 1 (Job Status):** A massive lag of ~2.4M records combined with a failed checkpoint indicates the job cannot process data fast enough or complete its stateful operations within the timeout window.\n*   **Evidence 2 (TaskManager Metrics):** The `enrich-join` operator is under high backpressure, and heap usage at 92% suggests memory exhaustion or near-exhaustion on TaskManagers running this job.\n\n**Fix:** Increase the JVM heap size for the Flink jobs to accommodate larger state buffers required by the join operation (e.g., increasing `-Xmx`). If that doesn't resolve it, consider optimizing the join logic itself (e.g., using a broadcast join if one side is small) or adding more parallelism.",
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:44.415837Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 4101394958,
+        'load_duration': 197987375,
+        'prompt_eval_count': 548,
+        'prompt_eval_duration': 280274000,
+        'eval_count': 191,
+        'eval_duration': 3619238000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-2ed6-7515-801e-b034beff07c6-0',
+      tool_calls=
+      [],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 548,
+        'output_tokens': 191,
+        'total_tokens': 739
+      }
+      )
+    ]
+  },
+  next=(),
+  config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70b-5a9f-624c-8003-c6b0d229408b'
+    }
+  },
+  metadata=
+  {
+    'source': 'loop',
+    'step': 3,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:01:44.420151+00:00',
+  parent_config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70b-3365-6e10-8002-c19cd1e3ffa7'
+    }
+  },
+  tasks=(),
+  interrupts=()),
+  StateSnapshot(values=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '25708ae6-8d70-4086-97b8-eb4da5dafd5b'
+      ),
+      AIMessage(content=
+      '',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:40.27084Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 7060764875,
+        'load_duration': 5339733875,
+        'prompt_eval_count': 412,
+        'prompt_eval_duration': 596661000,
+        'eval_count': 63,
+        'eval_duration': 1119664000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-1310-7108-918f-2c051a783710-0',
+      tool_calls=
+      [
+        {
+          'name': 'flink_job_status',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4',
+          'type': 'tool_call'
+        },
+        {
+          'name': 'taskmanager_metrics',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '4f3e92de-9905-4d2c-9ac4-a77ad4bca829',
+          'type': 'tool_call'
+        }
+      ],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 412,
+        'output_tokens': 63,
+        'total_tokens': 475
+      }
+      ),
+      ToolMessage(content=
+      'orders-enricher: lag=2,400,000 records; last checkpoint FAILED (timeout after 10m)',
+      name=
+      'flink_job_status',
+      id=
+      '05272f6b-4727-4865-92d2-e05ae9f3f99d',
+      tool_call_id=
+      '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4'
+      ),
+      ToolMessage(content=
+      "orders-enricher: backpressure=HIGH on operator 'enrich-join'; heap=92%; parallelism=4",
+      name=
+      'taskmanager_metrics',
+      id=
+      '4efb65a4-0f96-4318-93e8-642316292e10',
+      tool_call_id=
+      '4f3e92de-9905-4d2c-9ac4-a77ad4bca829'
+      )
+    ]
+  },
+  next=(
+  'agent',
+  ),
+  config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70b-3365-6e10-8002-c19cd1e3ffa7'
+    }
+  },
+  metadata=
+  {
+    'source': 'loop',
+    'step': 2,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:01:40.307245+00:00',
+  parent_config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70b-3346-6a24-8001-0ba01d235b85'
+    }
+  },
+  tasks=(PregelTask(id=
+  '680b9cbf-9379-98dd-5401-263ca32a9ab2',
+  name=
+  'agent',
+  path=(
+  '__pregel_pull',
+  'agent'
+  ),
+  error=None,
+  interrupts=(),
+  state=None,
+  result=
+  {
+    'messages': [
+      AIMessage(content=
+      "**Likely cause:** The `enrich-join` operator is causing a memory pressure bottleneck, leading to high backpressure and checkpoint failures.\n\n*   **Evidence 1 (Job Status):** A massive lag of ~2.4M records combined with a failed checkpoint indicates the job cannot process data fast enough or complete its stateful operations within the timeout window.\n*   **Evidence 2 (TaskManager Metrics):** The `enrich-join` operator is under high backpressure, and heap usage at 92% suggests memory exhaustion or near-exhaustion on TaskManagers running this job.\n\n**Fix:** Increase the JVM heap size for the Flink jobs to accommodate larger state buffers required by the join operation (e.g., increasing `-Xmx`). If that doesn't resolve it, consider optimizing the join logic itself (e.g., using a broadcast join if one side is small) or adding more parallelism.",
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:44.415837Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 4101394958,
+        'load_duration': 197987375,
+        'prompt_eval_count': 548,
+        'prompt_eval_duration': 280274000,
+        'eval_count': 191,
+        'eval_duration': 3619238000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-2ed6-7515-801e-b034beff07c6-0',
+      tool_calls=
+      [],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 548,
+        'output_tokens': 191,
+        'total_tokens': 739
+      }
+      )
+    ]
+  }
+  ),
+  ),
+  interrupts=()),
+  StateSnapshot(values=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '25708ae6-8d70-4086-97b8-eb4da5dafd5b'
+      ),
+      AIMessage(content=
+      '',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:40.27084Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 7060764875,
+        'load_duration': 5339733875,
+        'prompt_eval_count': 412,
+        'prompt_eval_duration': 596661000,
+        'eval_count': 63,
+        'eval_duration': 1119664000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-1310-7108-918f-2c051a783710-0',
+      tool_calls=
+      [
+        {
+          'name': 'flink_job_status',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4',
+          'type': 'tool_call'
+        },
+        {
+          'name': 'taskmanager_metrics',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '4f3e92de-9905-4d2c-9ac4-a77ad4bca829',
+          'type': 'tool_call'
+        }
+      ],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 412,
+        'output_tokens': 63,
+        'total_tokens': 475
+      }
+      )
+    ]
+  },
+  next=(
+  'tools',
+  ),
+  config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70b-3346-6a24-8001-0ba01d235b85'
+    }
+  },
+  metadata=
+  {
+    'source': 'loop',
+    'step': 1,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:01:40.294309+00:00',
+  parent_config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70a-ef90-6834-8000-7844b04a48de'
+    }
+  },
+  tasks=(PregelTask(id=
+  'c83cd03d-36e7-8fde-5e1d-93b959819a6b',
+  name=
+  'tools',
+  path=(
+  '__pregel_pull',
+  'tools'
+  ),
+  error=None,
+  interrupts=(),
+  state=None,
+  result=
+  {
+    'messages': [
+      ToolMessage(content=
+      'orders-enricher: lag=2,400,000 records; last checkpoint FAILED (timeout after 10m)',
+      name=
+      'flink_job_status',
+      id=
+      '05272f6b-4727-4865-92d2-e05ae9f3f99d',
+      tool_call_id=
+      '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4'
+      ),
+      ToolMessage(content=
+      "orders-enricher: backpressure=HIGH on operator 'enrich-join'; heap=92%; parallelism=4",
+      name=
+      'taskmanager_metrics',
+      id=
+      '4efb65a4-0f96-4318-93e8-642316292e10',
+      tool_call_id=
+      '4f3e92de-9905-4d2c-9ac4-a77ad4bca829'
+      )
+    ]
+  }
+  ),
+  ),
+  interrupts=()),
+  StateSnapshot(values=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {},
+      id=
+      '25708ae6-8d70-4086-97b8-eb4da5dafd5b'
+      )
+    ]
+  },
+  next=(
+  'agent',
+  ),
+  config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70a-ef90-6834-8000-7844b04a48de'
+    }
+  },
+  metadata=
+  {
+    'source': 'loop',
+    'step': 0,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:01:33.194401+00:00',
+  parent_config=
+  {
+    'configurable': {
+      'thread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70a-ef83-674c-bfff-d4e648c768a0'
+    }
+  },
+  tasks=(PregelTask(id=
+  '505fa9bf-6738-0f30-c851-7a8153643832',
+  name=
+  'agent',
+  path=(
+  '__pregel_pull',
+  'agent'
+  ),
+  error=None,
+  interrupts=(),
+  state=None,
+  result=
+  {
+    'messages': [
+      AIMessage(content=
+      '',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {
+        'model': 'qwen3.5:4b',
+        'created_at': '2026-11-07T06:01:40.27084Z',
+        'done': True,
+        'done_reason': 'stop',
+        'total_duration': 7060764875,
+        'load_duration': 5339733875,
+        'prompt_eval_count': 412,
+        'prompt_eval_duration': 596661000,
+        'eval_count': 63,
+        'eval_duration': 1119664000,
+        'logprobs': None,
+        'model_name': 'qwen3.5:4b',
+        'model_provider': 'ollama'
+      },
+      id=
+      'lc_run--01a1b499-1310-7108-918f-2c051a783710-0',
+      tool_calls=
+      [
+        {
+          'name': 'flink_job_status',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '7d9ab74b-7b4d-4cf0-bee5-be8355f6a8d4',
+          'type': 'tool_call'
+        },
+        {
+          'name': 'taskmanager_metrics',
+          'args': {
+            'job': 'orders-enricher'
+          },
+          'id': '4f3e92de-9905-4d2c-9ac4-a77ad4bca829',
+          'type': 'tool_call'
+        }
+      ],
+      invalid_tool_calls=
+      [],
+      usage_metadata=
+      {
+        'input_tokens': 412,
+        'output_tokens': 63,
+        'total_tokens': 475
+      }
+      )
+    ]
+  }
+  ),
+  ),
+  interrupts=()),
+  StateSnapshot(values=
+  {
+    'messages': []
+  },
+  next=(
+  '__start__',
+  ),
+  config=
+  {
+    'configurable': {
+      'athread_id': 'INC-4211',
+      'checkpoint_ns': '',
+      'checkpoint_id': '1f1da70a-ef83-674c-bfff-d4e648c768a0'
+    }
+  },
+  metadata=
+  {
+    'source': 'input',
+    'step': -1,
+    'parents': {}
+  },
+  created_at=
+  '2026-11-07T06:01:33.189064+00:00',
+  parent_config=None,
+  tasks=(PregelTask(id=
+  '07844a7e-85a3-a2c1-d106-77b54422e098',
+  name=
+  '__start__',
+  path=(
+  '__pregel_pull',
+  '__start__'
+  ),
+  error=None,
+  interrupts=(),
+  state=None,
+  result=
+  {
+    'messages': [
+      HumanMessage(content=
+      'orders-enricher is lagging. Why?',
+      additional_kwargs=
+      {},
+      response_metadata=
+      {}
+      )
+    ]
+  }
+  ),
+  ),
+  interrupts=())
+]

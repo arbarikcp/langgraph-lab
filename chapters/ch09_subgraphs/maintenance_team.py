@@ -118,6 +118,7 @@ def main() -> None:
 
     print("▶ style A: shared keys")
     graph = build_shared_keys_graph()
+    print(graph.get_graph().draw_mermaid())
     cfg = {"configurable": {"thread_id": "INC-4300"}}
     for ns, update in graph.stream({"incident": "slow Trino scans on sales.orders"}, cfg,
                                    stream_mode="updates", subgraphs=True, context=ctx):
@@ -134,6 +135,7 @@ def main() -> None:
 
     print("\n▶ style B: wrapper node with its own schema")
     graph = build_wrapper_graph()
+    print(graph.get_graph().draw_mermaid())
     cfg = {"configurable": {"thread_id": "TICKET-17"}}
     out = graph.invoke({"ticket": "compact sales.orders", "target_table": "sales.orders"}, cfg, context=ctx)
     print(f"   paused: interrupt from inside the child -> {out['__interrupt__'][0].value}")
